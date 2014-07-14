@@ -12,7 +12,7 @@
 start_link(Args) ->
 	case Args of 
 		{local, ServerName} ->
-			gen_server:start_link({local, ServerName}, ?MODULE, [], []);
+			gen_server:start_link({local, ServerName}, ?MODULE, [], [ServerName]);
 		_ -> 
 			gen_server:start_link(?MODULE, [], [])
 	end.
@@ -25,7 +25,7 @@ stop(Pid) ->
 
 
 %%% gen_server callback functions
-init([]) -> {ok, ok}.
+init([ServerName]) -> {ok, ServerName}.
 
 handle_call({echo_file, FileName, Mode}, _From, State) ->
 	OutFileName = FileName ++ ".out",

@@ -34,10 +34,14 @@ init([]) ->
     	end, Pools),
 
 	{ok, NumReaders} = application:get_env(file_echo, num_readers),
+	ReaderSpecs = lists:map(fun(Num) ->
+			?NAMED_CHILD(file_reader, "reader_"++integer_to_list(Num), worker)
+		end, 
+		lists:seq(1, NumReaders)
+	)
 
 
-    {ok, {{one_for_one, 10, 10}, PoolSpecs ++ [?NAMED_CHILD(file_reader, file_reader, worker), ?NAMED_CHILD(file_echo_worker, file_echo_worker, worker)]}}.
-
+    {ok, {{one_for_one, 10, 10}, PoolSpecs ++ ReaderSpecs ++ [?NAMED_CHILD(file_reader, input, worker), ?NAMED_CHILD(file_echo_worker, file_echo_worker, worker)]}}.
 
 
 
