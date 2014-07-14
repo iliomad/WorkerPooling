@@ -3,7 +3,7 @@
 -behaviour(application).
 
 %% Application callbacks
--export([start/2, stop/1, echo_file/1]).
+-export([start/2, stop/1, echo_file/2]).
 
 %% ===================================================================
 %% Application callbacks
@@ -16,6 +16,6 @@ stop(_State) ->
     ok.
 
 
-echo_file(Filename) ->
-	file_reader:echo_file(file_reader, Filename, file_echo_worker).
+echo_file(Filename, Mode) ->
+	file_reader:echo_file(file_reader, Filename, Mode).
 

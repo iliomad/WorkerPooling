@@ -10,8 +10,13 @@
 
 
 %%% Implementation of module interface functions
-start_link(_Args) ->
-	gen_server:start_link(?MODULE, [], []).
+start_link(Args) ->
+	case Args of 
+		{local, ServerName} ->
+			gen_server:start_link({local, ServerName}, ?MODULE, [], []);
+		_ -> 
+			gen_server:start_link(?MODULE, [], [])
+	end.
 
 echo_line(Pid, Filename, Line) ->
 	gen_server:call(Pid, {echo_line, Filename, Line}).
