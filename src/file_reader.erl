@@ -12,7 +12,7 @@
 start_link(Args) ->
 	case Args of 
 		{local, ServerName} ->
-			gen_server:start_link({local, ServerName}, ?MODULE, [], [ServerName]);
+			gen_server:start_link({local, ServerName}, ?MODULE, [ServerName], []);
 		_ -> 
 			gen_server:start_link(?MODULE, [], [])
 	end.
@@ -25,16 +25,17 @@ stop(Pid) ->
 
 
 %%% gen_server callback functions
-init([ServerName]) -> {ok, ServerName}.
+init([ServerName]) -> 
+	{ok, ServerName}.
 
-handle_call({echo_file, FileName, Mode}, _From, State) ->
-	OutFileName = FileName ++ ".out",
+handle_call({echo_file, FileName, Mode}, _From, ServerName) ->
+	OutFileName = atom_to_list(ServerName) ++ ".out",
 	{ok, Handle} = file:open(FileName, [read]),
 	{ok, LinesReadCount} = read_and_echo_lines(OutFileName, Handle, 0, Mode),
 	file:close(Handle),
-	{reply, LinesReadCount, State};
-handle_call(terminate, _From, State) ->
-	{stop, normal, ok, State}.
+	{reply, LinesReadCount, ServerName};
+handle_call(terminate, _From, ServerName) ->
+	{stop, normal, ok, ServerName}.
 
 
 handle_cast(_Request, State) ->

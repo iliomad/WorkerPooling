@@ -10,7 +10,7 @@
 
 %% Helper macro for declaring children of supervisor
 -define(CHILD(I, Type), {I, {I, start_link, []}, permanent, 5000, Type, [I]}).
--define(NAMED_CHILD(I, N, Type), {I, {I, start_link, [{local, N}]}, permanent, 5000, Type, [I]}).
+-define(NAMED_CHILD(I, N, Type), {N, {I, start_link, [{local, N}]}, permanent, 5000, Type, [I]}).
 
 
 %% ===================================================================
@@ -35,13 +35,12 @@ init([]) ->
 
 	{ok, NumReaders} = application:get_env(file_echo, num_readers),
 	ReaderSpecs = lists:map(fun(Num) ->
-			?NAMED_CHILD(file_reader, "reader_"++integer_to_list(Num), worker)
+			?NAMED_CHILD(file_reader, list_to_atom("reader_"++integer_to_list(Num)), worker)
 		end, 
 		lists:seq(1, NumReaders)
-	)
+	),
 
-
-    {ok, {{one_for_one, 10, 10}, PoolSpecs ++ ReaderSpecs ++ [?NAMED_CHILD(file_reader, input, worker), ?NAMED_CHILD(file_echo_worker, file_echo_worker, worker)]}}.
+    {ok, {{one_for_one, 10, 10}, PoolSpecs ++ ReaderSpecs ++ [?NAMED_CHILD(file_reader, file_reader, worker), ?NAMED_CHILD(file_echo_worker, file_echo_worker, worker)]}}.
 
 
 
