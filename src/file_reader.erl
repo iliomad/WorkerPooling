@@ -48,7 +48,10 @@ terminate(_Reason, _State) ->
 read_and_echo_line(FileHandle, WorkerId, LinesReadCount) ->
 	case file:read_line(FileHandle) of 
 		{ok, Data} -> 
-			file_echo_worker:echo_line(WorkerId, integer_to_list(LinesReadCount+1) ++"_output.txt", Data),
+		    poolboy:transaction(dapool, fun(Worker) ->
+		        gen_server:call(Worker, {echo_line, integer_to_list(LinesReadCount+1) ++"_output.txt", Data})
+		    end),
+			%%file_echo_worker:echo_line(WorkerId, integer_to_list(LinesReadCount+1) ++"_output.txt", Data),
 			read_and_echo_line(FileHandle, WorkerId, LinesReadCount+1);
 		eof ->
 			{ok, LinesReadCount};

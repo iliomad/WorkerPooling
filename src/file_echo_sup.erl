@@ -23,13 +23,17 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { 
-    	{one_for_one, 5, 10}, 
-    	[
-    		?CHILD(file_reader, worker), 
-    		?CHILD(file_echo_worker, worker)
-    	]
-    }}.
+	{ok, Pools} = application:get_env(file_echo, pools),
+	PoolSpecs = lists:map(fun({Name, SizeArgs, WorkerArgs}) ->
+        PoolArgs = [
+        	{name, {local, Name}},
+           	{worker_module, file_echo_worker}] ++ SizeArgs,
+           	poolboy:child_spec(Name, PoolArgs, WorkerArgs)
+    	end, Pools),
+
+
+    {ok, {{one_for_one, 10, 10}, PoolSpecs ++ [?CHILD(file_reader, worker)]}}.
+
 
 
 
