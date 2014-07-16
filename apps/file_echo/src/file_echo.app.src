@@ -1,0 +1,14 @@
+{application,file_echo,
+	[
+		{description,[]},
+		{vsn,"1.0.0"},
+		{registered,[]},
+		{applications,[kernel , stdlib, poolboy, lager]},
+		{mod,{file_echo_app,[]}},
+		{modules,[
+			file_echo_app,
+			file_echo_sup,
+			file_echo_worker,
+			file_reader
+		]}
+]}.
