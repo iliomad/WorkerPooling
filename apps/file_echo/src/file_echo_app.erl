@@ -19,6 +19,7 @@ stop(_State) ->
 echo_file(Filename, Mode) ->
 	file_reader:echo_file(file_reader, Filename, Mode).
 
+
 echo_files(Mode) ->
 	{ok, NumReaders} = application:get_env(file_echo, num_readers),
 	lists:foreach(fun(Num) ->

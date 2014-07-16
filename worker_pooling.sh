@@ -1,2 +1,2 @@
 #!/bin/bash
-erl -pa ./ebin -pa ./deps/*/ebin 
+erl -pa ./apps/*/ebin -pa ./deps/*/ebin 
